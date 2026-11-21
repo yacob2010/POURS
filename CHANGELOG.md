@@ -1,0 +1,40 @@
+# Changelog
+
+## [0.0.20] - 2026-11-21
+
+### Added
+- Your wines are now saved to your account, so they're there on any device you sign in from
+- Custom "Other…" types, sub-types, regions, and descriptors are saved to your account too
+- Wine cards in the library showing name, type, region, rating, price, and tasting date
+- An add and edit wine form with type, sub-type, region, vintage, price, tasting date, rating, descriptors, and notes
+- A wine detail view with Edit and Delete, including a confirmation before removing a wine
+- A library page with search, a type filter, and sorting by date added, name, rating, price, or tasting date
+- Blend as its own wine type, with Red Blend, White Blend, GSM, Bordeaux Blend, Meritage, and Super Tuscan sub-types
+- An arrow button to flip sorting between ascending and descending
+- Pressing Escape closes any open window
+- A light (off-white) theme alongside the burgundy one, with a Light/Dark button in the header that remembers your choice
+
+### Changed
+- Signing in now takes you to your wine library instead of the placeholder page
+
+### Fixed
+- Tasting dates no longer show the previous month when the date is the 1st
+
+### Removed
+- The temporary "Add test wine" button
+
+## [0.0.6] - 2026-11-20
+
+### Added
+- A fresh Pours project built on React, Vite, and Tailwind, replacing the old Replit-based one
+- The burgundy and rosé colors, with Playball for the wordmark and Nunito Sans for everything else
+- A connection to Supabase so your data can live online instead of in one browser
+- Email and password sign-up and sign-in, with a "stay signed in" session
+- A set of ready-made buttons, inputs, dialogs, and menus to build the app screens from
+
+### Removed
+- The default Vite starter page and its leftover styles
+
+---
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
