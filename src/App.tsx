@@ -25,7 +25,7 @@ function App() {
       <h1 className="font-display text-5xl tracking-wide">POURS</h1>
       <p className="text-muted-foreground">Signed in as {session.user.email}</p>
       <Button onClick={() => supabase.auth.signOut()}>Sign out</Button>
-    </div>
+    </div> 
   )
 }
 
