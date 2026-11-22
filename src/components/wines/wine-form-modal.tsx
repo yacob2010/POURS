@@ -115,6 +115,8 @@ export default function WineFormModal({
 
     const payload: WineInput = {
       name: form.name.trim(),
+      category: wine?.category ?? "Wine",
+      brand: wine?.brand ?? null,
       type: form.type || null,
       subType: form.subType || null,
       region: form.region || null,

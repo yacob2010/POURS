@@ -5,6 +5,8 @@ import type { Wine, WineInput } from '@/types'
 type Row = {
   id: number
   name: string
+  category: string
+  brand: string | null
   type: string | null
   sub_type: string | null
   region: string | null
@@ -20,6 +22,8 @@ type Row = {
 const fromRow = (r: Row): Wine => ({
   id: r.id,
   name: r.name,
+  category: r.category,
+  brand: r.brand,
   type: r.type,
   subType: r.sub_type,
   region: r.region,
@@ -34,6 +38,8 @@ const fromRow = (r: Row): Wine => ({
 
 const toRow = (w: Partial<WineInput>) => ({
   ...(w.name !== undefined && { name: w.name }),
+  ...(w.category !== undefined && { category: w.category }),
+  ...(w.brand !== undefined && { brand: w.brand }),
   ...(w.type !== undefined && { type: w.type }),
   ...(w.subType !== undefined && { sub_type: w.subType }),
   ...(w.region !== undefined && { region: w.region }),

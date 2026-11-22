@@ -4,6 +4,45 @@
 
 A personal wine tracker, with cocktail recipes on the way. Log what you drink, rate it, add tasting notes, and find it again later. Your data lives in your account, so it's there on any device.
 
+## Roadmap
+
+### Done
+- [x] Wine library with ratings, notes, and descriptors
+- [x] Accounts and sync with Supabase
+- [x] Live on GitHub Pages
+- [x] Sidebar and Stats page
+- [x] Blend wine type, Escape closes dialogs
+
+### Phase 1: Library for wines and liquors
+- [ ] Add category and brand columns to the database
+- [ ] Category picker in the add/edit form (Wine, Gin, Rum, Whiskey, Bourbon, and more)
+- [ ] Types and sub-types that change with the category
+- [ ] Wine-only fields (vintage, region, descriptors) hidden for liquors
+- [ ] Category filter on the Library page
+- [ ] Sort direction toggle
+
+### Phase 2: Stats by category
+- [ ] Collapsible sections per category, with wine split into red, white, and sparkling
+- [ ] Total, average rating, average price, and price range for each
+- [ ] Overall summary at the top
+
+### Phase 3: Recipes
+- [ ] Recipes table, form, and detail view (ingredients, method, glass, rating, notes)
+- [ ] Link recipe ingredients to bottles in the Library
+
+### Phase 4: Settings
+- [ ] Change password
+- [ ] Theme choice
+- [ ] Export
+
+### Phase 5: Home dashboard
+- [ ] Search across wines, liquors, and recipes
+- [ ] Quick add buttons
+
+### Loose ends
+- [ ] Set the Supabase Site URL
+- [ ] Turn email confirmation back on before sharing the app
+
 ## Features
 
 - Email and password accounts, with data kept per user
@@ -130,12 +169,6 @@ src/
 
 - Colors: burgundy `#2a0a14`, rosé `#d4526e`, off-white `#f5eaed`, plus `#6b1a2e` and `#f5b8c6`
 - Fonts: Playball for the wordmark (all caps), Nunito Sans for everything else
-
-## Roadmap
-
-- Cocktail and drink recipe tracking (ingredients, method, glass, rating, notes)
-- Stats and settings pages, and a sidebar
-- Deploy to GitHub Pages
 
 ## Changelog
 

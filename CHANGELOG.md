@@ -1,16 +1,19 @@
 # Changelog
 
-## [0.0.25] - 2026-11-22
+## [0.0.28] - 2026-11-22
 
 ### Added
+- Pours is now live on GitHub Pages and updates automatically whenever changes are pushed
 - Sidebar with Library and Stats links, plus your email and a sign-out button
 - Stats page with total wines, average rating, average price, price range, highest-rated wine, wines by type and region charts, most used descriptors, and recently added wines
 
 ### Changed
+- Stopped syncing unneeded files (`node_modules` and `.DS_Store`) to GitHub, so syncing is faster and the repo is cleaner
 - Dark mode now uses a deeper, richer maroon, with clearer differences between the page, sidebar, cards, and borders
 - The POURS wordmark and tagline now appear only in the sidebar, not at the top of the Library page
 
 ### Fixed
+- Fixed the blank page on the live site and the missing sign-in connection after publishing
 - Google Fonts now load correctly, so Playball and Nunito Sans show up as intended
 
 ## [0.0.20] - 2026-11-21
