@@ -48,8 +48,10 @@ export default function WineCard({ wine, onClick }: WineCardProps) {
           <h3 className="font-semibold text-foreground text-sm leading-snug truncate group-hover:text-primary transition-colors">
             {wine.name}
           </h3>
-          {wine.vintage && (
-            <p className="text-xs text-muted-foreground mt-0.5">{wine.vintage}</p>
+          {(wine.brand || wine.vintage) && (
+            <p className="text-xs text-muted-foreground mt-0.5 truncate">
+              {[wine.brand, wine.vintage].filter(Boolean).join(" · ")}
+            </p>
           )}
         </div>
         {wine.type && (

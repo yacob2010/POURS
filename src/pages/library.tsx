@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "@/hooks/use-theme";
 
-const BASE_TYPES = ["Red", "White", "Rosé", "Blend", "Sparkling", "Dessert", "Fortified"];
+const CATEGORY_FILTERS = ["All", "Wine", "Liquor", "Drink"];
 const SORT_OPTIONS = [
   { value: "dateAdded", label: "Date added" },
   { value: "name", label: "Name" },
@@ -29,6 +29,7 @@ export default function LibraryPage() {
   const { customValues, addCustomValue } = useCustomValues();
 
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("");
   const [sort, setSort] = useState<SortKey>("dateAdded");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
@@ -36,18 +37,22 @@ export default function LibraryPage() {
   const [editingWine, setEditingWine] = useState<Wine | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
+  // Type filter only lists types you actually have in the chosen category
   const typeOptions = useMemo(() => {
-    const used = wines.map((w) => w.type).filter((t): t is string => !!t);
-    return [...new Set([...BASE_TYPES, ...used])];
-  }, [wines]);
+    const inCategory = categoryFilter === "All" ? wines : wines.filter((w) => w.category === categoryFilter);
+    const used = inCategory.map((w) => w.type).filter((t): t is string => !!t);
+    return [...new Set(used)].sort();
+  }, [wines, categoryFilter]);
 
   const visibleWines = useMemo(() => {
     let result = [...wines];
+    if (categoryFilter !== "All") result = result.filter((w) => w.category === categoryFilter);
     if (search) {
       const q = search.toLowerCase();
       result = result.filter(
         (w) =>
           w.name.toLowerCase().includes(q) ||
+          (w.brand?.toLowerCase() ?? "").includes(q) ||
           (w.region?.toLowerCase() ?? "").includes(q) ||
           (w.type?.toLowerCase() ?? "").includes(q) ||
           (w.subType?.toLowerCase() ?? "").includes(q),
@@ -67,12 +72,18 @@ export default function LibraryPage() {
       return order === "asc" ? cmp : -cmp;
     });
     return result;
-  }, [wines, search, typeFilter, sort, order]);
+  }, [wines, search, categoryFilter, typeFilter, sort, order]);
 
   const formOpen = showAddModal || editingWine !== null;
   const closeForm = () => {
     setShowAddModal(false);
     setEditingWine(null);
+  };
+
+  const clearFilters = () => {
+    setSearch("");
+    setCategoryFilter("All");
+    setTypeFilter("");
   };
 
   return (
@@ -84,7 +95,7 @@ export default function LibraryPage() {
             <div>
               {!loading && (
                 <p className="text-sm text-muted-foreground">
-                  {visibleWines.length} {visibleWines.length === 1 ? "wine" : "wines"}
+                  {visibleWines.length} {visibleWines.length === 1 ? "item" : "items"}
                 </p>
               )}
             </div>
@@ -99,9 +110,27 @@ export default function LibraryPage() {
                 <svg viewBox="0 0 24 24" className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Add wine
+                Add to your collection
               </Button>
             </div>
+          </div>
+
+          {/* Category chips */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {CATEGORY_FILTERS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => { setCategoryFilter(c); setTypeFilter(""); }}
+                className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                  categoryFilter === c
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-muted-foreground border-border hover:border-primary/40"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
           </div>
 
           {/* Filters */}
@@ -111,7 +140,7 @@ export default function LibraryPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
               <Input
-                placeholder="Search wines..."
+                placeholder="Search your collection..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -169,26 +198,26 @@ export default function LibraryPage() {
 
           {error && (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <p className="text-muted-foreground">Something went wrong loading your wines.</p>
+              <p className="text-muted-foreground">Something went wrong loading your collection.</p>
               <p className="text-xs text-destructive mt-1">{error}</p>
             </div>
           )}
 
           {!loading && !error && visibleWines.length === 0 && (
             <div className="flex flex-col items-center justify-center py-24 text-center max-w-sm mx-auto">
-              {search || typeFilter ? (
+              {search || typeFilter || categoryFilter !== "All" ? (
                 <>
-                  <p className="font-medium text-foreground mb-1">No wines found</p>
+                  <p className="font-medium text-foreground mb-1">Nothing found</p>
                   <p className="text-sm text-muted-foreground mb-4">Try adjusting your search or filters.</p>
-                  <Button variant="ghost" onClick={() => { setSearch(""); setTypeFilter(""); }}>
+                  <Button variant="ghost" onClick={clearFilters}>
                     Clear filters
                   </Button>
                 </>
               ) : (
                 <>
-                  <p className="font-medium text-foreground mb-1">Your cellar is empty</p>
-                  <p className="text-sm text-muted-foreground mb-4">Add your first wine to get started.</p>
-                  <Button onClick={() => setShowAddModal(true)}>Add wine</Button>
+                  <p className="font-medium text-foreground mb-1">Your collection is empty</p>
+                  <p className="text-sm text-muted-foreground mb-4">Add your first wine, liquor, or drink to get started.</p>
+                  <Button onClick={() => setShowAddModal(true)}>Add to your collection</Button>
                 </>
               )}
             </div>

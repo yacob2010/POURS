@@ -1,16 +1,24 @@
 # Changelog
 
-## [0.0.28] - 2026-11-22
+### [0.0.36] - 2026-11-22
 
 ### Added
-- Pours is now live on GitHub Pages and updates automatically whenever changes are pushed
 - Sidebar with Library and Stats links, plus your email and a sign-out button
 - Stats page with total wines, average rating, average price, price range, highest-rated wine, wines by type and region charts, most used descriptors, and recently added wines
+- Pours is now live on GitHub Pages and updates automatically whenever changes are pushed
+- The Library now holds liquor and drinks as well as wine, with a Category choice (Wine, Liquor, Drink) when adding or editing
+- Brand field for liquor, so you can track which brands you've tried
+- Category buttons on the Library page to filter by Wine, Liquor, or Drink
 
 ### Changed
-- Stopped syncing unneeded files (`node_modules` and `.DS_Store`) to GitHub, so syncing is faster and the repo is cleaner
 - Dark mode now uses a deeper, richer maroon, with clearer differences between the page, sidebar, cards, and borders
 - The POURS wordmark and tagline now appear only in the sidebar, not at the top of the Library page
+- Stopped syncing unneeded files (`node_modules` and `.DS_Store`) to GitHub, so syncing is faster and the repo is cleaner
+- Type and sub-type choices now change with the category, such as Gin with London Dry and Old Tom, or Red with Pinot Noir
+- Vintage is only asked for on wine
+- The type filter on the Library page only lists types you actually have in the chosen category
+- Library search now also matches brand
+- Library cards and the detail view show the brand, and the wording now says "collection" and "items" instead of "wines"
 
 ### Fixed
 - Fixed the blank page on the live site and the missing sign-in connection after publishing

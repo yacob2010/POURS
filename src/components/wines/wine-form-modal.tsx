@@ -9,7 +9,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-const BASE_TYPES = ["Red", "White", "Rosé", "Blend", "Sparkling", "Dessert", "Fortified"];
+const CATEGORIES = ["Wine", "Liquor", "Drink"];
+
+const TYPES_BY_CATEGORY: Record<string, string[]> = {
+  Wine: ["Red", "White", "Rosé", "Blend", "Sparkling", "Dessert", "Fortified"],
+  Liquor: ["Gin", "Rum", "Whiskey", "Bourbon", "Vodka", "Tequila", "Brandy", "Liqueur"],
+  Drink: ["Beer", "Cider", "Seltzer", "Cocktail", "Non-alcoholic"],
+};
 
 const SUBTYPES_BY_TYPE: Record<string, string[]> = {
   Red: ["Pinot Noir", "Cabernet Sauvignon", "Merlot", "Syrah/Shiraz", "Malbec", "Sangiovese", "Zinfandel", "Grenache"],
@@ -19,6 +25,14 @@ const SUBTYPES_BY_TYPE: Record<string, string[]> = {
   Sparkling: ["Champagne", "Prosecco", "Cava", "Crémant", "Pét-Nat"],
   Dessert: ["Sauternes", "Late Harvest", "Moscato", "Tokaji", "Beerenauslese"],
   Fortified: ["Port", "Sherry", "Madeira", "Marsala"],
+  Gin: ["London Dry", "Old Tom", "Plymouth", "Navy Strength", "New Western", "Genever"],
+  Rum: ["White", "Gold", "Dark", "Spiced", "Aged", "Rhum Agricole", "Overproof"],
+  Whiskey: ["Scotch", "Irish", "Rye", "Japanese", "Canadian", "Single Malt", "Blended"],
+  Bourbon: ["Small Batch", "Single Barrel", "Straight", "Bottled-in-Bond", "Wheated", "High Rye"],
+  Vodka: ["Grain", "Potato", "Flavored"],
+  Tequila: ["Blanco", "Reposado", "Añejo", "Extra Añejo", "Mezcal"],
+  Brandy: ["Cognac", "Armagnac", "Calvados", "Pisco", "American"],
+  Liqueur: ["Orange", "Coffee", "Herbal", "Amaro", "Cream", "Fruit"],
 };
 
 const BASE_REGIONS = [
@@ -45,11 +59,13 @@ type FormState = {
   name: string; type: string; subType: string; region: string;
   vintage: string; pricePaid: string; rating: number;
   tastingDate: string; notes: string; descriptors: string[];
+  category: string; brand: string;
 };
 
 const emptyForm = (): FormState => ({
   name: "", type: "", subType: "", region: "", vintage: "",
   pricePaid: "", rating: 7, tastingDate: "", notes: "", descriptors: [],
+  category: "Wine", brand: "",
 });
 
 export default function WineFormModal({
@@ -72,12 +88,17 @@ export default function WineFormModal({
 
   const isEditing = !!wine;
 
-  const customTypes = customValues.filter(v => v.category === "type").map(v => v.value);
-  const customSubTypes = customValues.filter(v => v.category === "subType").map(v => v.value);
+  const isWine = form.category === "Wine";
+  const typeKey = isWine ? "type" : `type:${form.category}`;
+  const subTypeKey = isWine ? "subType" : `subType:${form.type}`;
+
+  const customTypes = customValues.filter(v => v.category === typeKey).map(v => v.value);
+  const customSubTypes = customValues.filter(v => v.category === subTypeKey).map(v => v.value);
   const customRegions = customValues.filter(v => v.category === "region").map(v => v.value);
   const customDescriptors = customValues.filter(v => v.category === "descriptor").map(v => v.value);
 
-  const allTypes = [...BASE_TYPES, ...customTypes.filter(v => !BASE_TYPES.includes(v))];
+  const baseTypes = TYPES_BY_CATEGORY[form.category] ?? [];
+  const allTypes = [...baseTypes, ...customTypes.filter(v => !baseTypes.includes(v))];
   const baseSubTypes = form.type ? (SUBTYPES_BY_TYPE[form.type] ?? []) : [];
   const allSubTypes = [...baseSubTypes, ...customSubTypes.filter(v => !baseSubTypes.includes(v))];
   const allRegions = [...BASE_REGIONS, ...customRegions.filter(v => !BASE_REGIONS.includes(v))];
@@ -96,6 +117,8 @@ export default function WineFormModal({
         tastingDate: wine.tastingDate ?? "",
         notes: wine.notes ?? "",
         descriptors: wine.descriptors ?? [],
+        category: wine.category,
+        brand: wine.brand ?? "",
       });
       setHasRating(wine.rating != null);
     } else {
@@ -115,12 +138,12 @@ export default function WineFormModal({
 
     const payload: WineInput = {
       name: form.name.trim(),
-      category: wine?.category ?? "Wine",
-      brand: wine?.brand ?? null,
+      category: form.category,
+      brand: form.category === "Liquor" ? form.brand.trim() || null : null,
       type: form.type || null,
       subType: form.subType || null,
       region: form.region || null,
-      vintage: form.vintage ? parseInt(form.vintage) : null,
+      vintage: isWine && form.vintage ? parseInt(form.vintage) : null,
       pricePaid: form.pricePaid ? parseFloat(form.pricePaid) : null,
       rating: hasRating ? form.rating : null,
       tastingDate: form.tastingDate || null,
@@ -152,7 +175,7 @@ export default function WineFormModal({
   const saveCustomType = async () => {
     const val = typeOther.trim();
     if (!val) return;
-    await onAddCustomValue("type", val);
+    await onAddCustomValue(typeKey, val);
     setForm(f => ({ ...f, type: val, subType: "" }));
     setShowTypeOther(false); setTypeOther("");
   };
@@ -160,7 +183,7 @@ export default function WineFormModal({
   const saveCustomSubType = async () => {
     const val = subTypeOther.trim();
     if (!val) return;
-    await onAddCustomValue("subType", val);
+    await onAddCustomValue(subTypeKey, val);
     setForm(f => ({ ...f, subType: val }));
     setShowSubTypeOther(false); setSubTypeOther("");
   };
@@ -191,11 +214,34 @@ export default function WineFormModal({
       <DialogContent className="max-w-lg max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display tracking-wide text-lg">
-            {isEditing ? "Edit wine" : "Add a wine"}
+            {isEditing ? "Edit entry" : "Add to your collection"}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Category */}
+          <div className="space-y-1.5">
+            <Label>Category</Label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(c => (
+                <button
+                  key={c} type="button"
+                  onClick={() => {
+                    setForm(f => ({ ...f, category: c, type: "", subType: "" }));
+                    setShowTypeOther(false); setShowSubTypeOther(false);
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                    form.category === c
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card text-muted-foreground border-border hover:border-primary/40"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Name */}
           <div className="space-y-1.5">
             <Label htmlFor="name">Name *</Label>
@@ -207,6 +253,19 @@ export default function WineFormModal({
               required
             />
           </div>
+
+          {/* Brand — liquor and drinks only */}
+          {form.category === "Liquor" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="brand">Brand</Label>
+              <Input
+                id="brand"
+                placeholder="e.g. Hendrick's"
+                value={form.brand}
+                onChange={e => setForm(f => ({ ...f, brand: e.target.value }))}
+              />
+            </div>
+          )}
 
           {/* Type */}
           <div className="space-y-1.5">
@@ -350,15 +409,17 @@ export default function WineFormModal({
 
           {/* Vintage + Price */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="vintage">Vintage</Label>
-              <Input
-                id="vintage" type="number" placeholder="e.g. 2018"
-                min={1900} max={new Date().getFullYear()}
-                value={form.vintage}
-                onChange={e => setForm(f => ({ ...f, vintage: e.target.value }))}
-              />
-            </div>
+            {isWine && (
+              <div className="space-y-1.5">
+                <Label htmlFor="vintage">Vintage</Label>
+                <Input
+                  id="vintage" type="number" placeholder="e.g. 2018"
+                  min={1900} max={new Date().getFullYear()}
+                  value={form.vintage}
+                  onChange={e => setForm(f => ({ ...f, vintage: e.target.value }))}
+                />
+              </div>
+            )}
             <div className="space-y-1.5">
               <Label htmlFor="price">Price paid ($)</Label>
               <Input
@@ -384,7 +445,7 @@ export default function WineFormModal({
               <Label>Rating</Label>
               <div className="flex items-center gap-2">
                 <Checkbox id="hasRating" checked={hasRating} onCheckedChange={v => setHasRating(!!v)} />
-                <label htmlFor="hasRating" className="text-xs text-muted-foreground cursor-pointer">Rate this wine</label>
+                <label htmlFor="hasRating" className="text-xs text-muted-foreground cursor-pointer">Rate this</label>
               </div>
             </div>
             {hasRating && (
@@ -399,7 +460,7 @@ export default function WineFormModal({
           </div>
 
           {/* Descriptors */}
-                   <div className="space-y-2">
+          <div className="space-y-2">
             <Label>Descriptors</Label>
             <div className="flex flex-wrap gap-2">
               {allDescriptors.map(d => (
@@ -457,7 +518,7 @@ export default function WineFormModal({
           <DialogFooter className="pt-2">
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button type="submit" disabled={saving || !form.name.trim()}>
-              {saving ? "Saving..." : isEditing ? "Save changes" : "Add wine"}
+              {saving ? "Saving..." : isEditing ? "Save changes" : "Add"}
             </Button>
           </DialogFooter>
         </form>

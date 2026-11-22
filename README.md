@@ -14,12 +14,13 @@ A personal wine tracker, with cocktail recipes on the way. Log what you drink, r
 - [x] Blend wine type, Escape closes dialogs
 
 ### Phase 1: Library for wines and liquors
-- [ ] Add category and brand columns to the database
-- [ ] Category picker in the add/edit form (Wine, Gin, Rum, Whiskey, Bourbon, and more)
-- [ ] Types and sub-types that change with the category
-- [ ] Wine-only fields (vintage, region, descriptors) hidden for liquors
-- [ ] Category filter on the Library page
-- [ ] Sort direction toggle
+- [x] Add category and brand columns to the database
+- [x] Category picker in the add/edit form (Wine, Liquor, Drink)
+- [x] Types and sub-types that change with the category
+- [x] Vintage hidden for liquor and drinks, brand for liquor only
+- [x] Category filter on the Library page
+- [x] Sort direction toggle
+- [x] Brand shown on cards and the detail view
 
 ### Phase 2: Stats by category
 - [ ] Collapsible sections per category, with wine split into red, white, and sparkling

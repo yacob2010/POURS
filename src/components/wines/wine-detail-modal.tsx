@@ -63,6 +63,9 @@ export default function WineDetailModal({ wine, onClose, onEdit, onDelete }: Pro
             <DialogTitle className="font-display tracking-wide text-xl pr-4 leading-snug">
               {wine.name}
             </DialogTitle>
+            {wine.brand && (
+              <p className="text-sm text-muted-foreground">{wine.brand}</p>
+            )}
           </DialogHeader>
 
           <div className="space-y-4">
@@ -167,7 +170,7 @@ export default function WineDetailModal({ wine, onClose, onEdit, onDelete }: Pro
       <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove this wine?</AlertDialogTitle>
+            <AlertDialogTitle>Remove this entry?</AlertDialogTitle>
             <AlertDialogDescription>
               "{wine.name}" will be permanently removed from your collection.
             </AlertDialogDescription>
