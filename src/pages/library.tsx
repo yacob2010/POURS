@@ -82,7 +82,6 @@ export default function LibraryPage() {
         <div className="sticky top-0 z-10 bg-background border-b border-border px-6 py-4">
           <div className="flex items-center justify-between gap-4 mb-3">
             <div>
-              <h1 className="font-display text-3xl tracking-wide text-foreground">POURS</h1>
               {!loading && (
                 <p className="text-sm text-muted-foreground">
                   {visibleWines.length} {visibleWines.length === 1 ? "wine" : "wines"}
